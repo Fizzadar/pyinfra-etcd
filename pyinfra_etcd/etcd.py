@@ -89,7 +89,8 @@ def _get_urls(host, type_):
 def _get_cluster_node_urls():
     cluster_urls = []
 
-    for host in inventory.get_group('etcd_nodes'):
+    # Either the etcd_nodes group of it exists, or the whole inventory
+    for host in inventory.get_group('etcd_nodes', inventory):
         # Get the peer addresses but w/o any localhost entries
         listen_urls = _get_urls(host, 'peer')
 
