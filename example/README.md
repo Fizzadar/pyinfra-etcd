@@ -8,7 +8,7 @@ Requirements:
 Boot & install the cluster:
 
 ```sh
-# Brinng up the VMs
+# Bring up the VMs
 vagrant up
 
 # Deploy an etcd cluster on them
