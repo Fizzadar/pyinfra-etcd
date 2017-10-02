@@ -101,7 +101,7 @@ def _get_cluster_node_urls():
     return cluster_urls
 
 
-@deploy('Install etcd', data_defaults=DEFAULTS)
+@deploy('Deploy etcd', data_defaults=DEFAULTS)
 def install_etcd(state, host, enable_service=True):
     if not host.data.etcd_version:
         raise DeployError(
