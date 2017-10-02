@@ -1,0 +1,15 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ host.data.etcd_data_dir }}
+EnvironmentFile=-{{ host.data.etcd_env_file }}
+User=etcd
+ExecStart=/usr/bin/etcd
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
