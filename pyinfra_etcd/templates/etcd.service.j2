@@ -7,7 +7,7 @@ Type=simple
 WorkingDirectory={{ host.data.etcd_data_dir }}
 EnvironmentFile=-{{ host.data.etcd_env_file }}
 User=etcd
-ExecStart=/usr/bin/etcd
+ExecStart={{ host.data.etcd_bin_dir }}/etcd
 Restart=on-failure
 LimitNOFILE=65536
 

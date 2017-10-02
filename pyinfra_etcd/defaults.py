@@ -6,6 +6,8 @@ DEFAULTS = {
     # Install
     'etcd_version': None,
     'etcd_download_base_url': 'https://github.com/coreos/etcd/releases/download',
+    'etcd_install_dir': '/usr/local/etcd',
+    'etcd_bin_dir': '/usr/local/bin',
 
     # Node config
     'etcd_env_file': '/etc/default/etcd',

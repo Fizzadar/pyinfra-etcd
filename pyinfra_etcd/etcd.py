@@ -122,8 +122,9 @@ def install_etcd(state, host, enable_service=True):
     )
 
     files.directory(
-        {'Ensure /usr/local/etcd exists'},
-        '/usr/local/etcd',
+        state, host,
+        {'Ensure {0} exists'.format(host.data.etcd_install_dir)},
+        host.data.etcd_install_dir,
         user='etcd',
         group='etcd',
     )
@@ -158,30 +159,20 @@ def install_etcd(state, host, enable_service=True):
             'tar -xzf {0} -C /usr/local/etcd'.format(temp_filename),
         )
 
-    # If the bin links don't exist or we just downloaded etcd, (re)link it!
-    etcd_link = host.fact.link('/usr/local/bin/etcd')
-    if (
-        download_etcd.changed
-        or not etcd_link
-        or not host.fact.file(etcd_link['link_target'])
-    ):
-        files.link(
-            {'Symlink etcd to /usr/bin'},
-            '/usr/local/bin/etcd',  # link
-            '/usr/local/etcd/{0}/etcd'.format(version_name),  # target
-        )
+    files.link(
+        state, host,
+        {'Symlink etcd to /usr/bin'},
+        '{{ host.data.etcd_bin_dir }}/etcd',  # link
+        '{{ host.data.etcd_install_dir }}/{{ host.data.etcd_version_name }}/etcd',
+    )
 
-    etcdctl_link = host.fact.link('/usr/local/bin/etcdctl')
-    if (
-        download_etcd.changed
-        or not etcdctl_link
-        or not host.fact.file(etcdctl_link['link_target'])
-    ):
-        files.link(
-            {'Symlink etcdctl to /usr/local/bin'},
-            '/usr/local/bin/etcdctl',
-            '/usr/local/etcd/{0}/etcdctl'.format(version_name),
-        )
+    files.link(
+        state, host,
+        {'Symlink etcdctl to {0}'.format(host.data.etcd_bin_dir)},
+        '{{ host.data.etcd_bin_dir }}/etcdctl',
+        '{{ host.data.etcd_install_dir }}/{{ host.data.etcd_version_name }}/etcdctl',
+    )
+
 
     # Setup etcd init
     files.template(
