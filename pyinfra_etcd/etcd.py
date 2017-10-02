@@ -134,15 +134,14 @@ def install_etcd(state, host, enable_service=True):
         '%s.tar.gz'
     ) % version_name
 
-    temporary_filename = '{0}/{1}.tar.gz'.format(
-        state.config.TEMP_DIR,
-        version_name,
+    temp_filename = state.get_temp_filename(
+        'etcd-{0}'.format(host.data.etcd_version),
     )
 
     download_etcd = files.download(
         {'Download etcd'},
         download_url,
-        temporary_filename,
+        temp_filename,
     )
 
     # If we downloaded etcd, extract and symlink/install it
@@ -156,7 +155,7 @@ def install_etcd(state, host, enable_service=True):
 
         server.shell(
             {'Extract etcd'},
-            'tar -xzf {0} -C /usr/local/etcd'.format(temporary_filename),
+            'tar -xzf {0} -C /usr/local/etcd'.format(temp_filename),
         )
 
         files.link(
