@@ -12,11 +12,11 @@
 ETCD_NAME={{ host.name }}
 ETCD_DATA_DIR={{ host.data.etcd_data_dir }}
 
-ETCD_INITIAL_ADVERTISE_PEER_URLS={{ comma_list(advertise_peer_urls) }}
-ETCD_LISTEN_PEER_URLS={{ comma_list(listen_peer_urls) }}
+ETCD_INITIAL_ADVERTISE_PEER_URLS={{ comma_list(get_urls(host, 'peer')) }}
+ETCD_LISTEN_PEER_URLS={{ comma_list(get_urls(host, 'peer')) }}
 
-ETCD_ADVERTISE_CLIENT_URLS={{ comma_list(advertise_client_urls) }}
-ETCD_LISTEN_CLIENT_URLS={{ comma_list(listen_client_urls) }}
+ETCD_ADVERTISE_CLIENT_URLS={{ comma_list(get_urls(host, 'client')) }}
+ETCD_LISTEN_CLIENT_URLS={{ comma_list(get_urls(host, 'client')) }}
 
 
 # Clustering

@@ -196,12 +196,7 @@ def configure_etcd(state, host, enable_service=True):
         '{{ host.data.etcd_env_file }}',
         # Cluster (peers)
         cluster_node_urls=_get_cluster_node_urls(),
-        # Peer
-        advertise_peer_urls=_get_urls(host, 'peer'),
-        listen_peer_urls=_get_urls(host, 'peer'),
-        # Client
-        advertise_client_urls=_get_urls(host, 'client'),
-        listen_client_urls=_get_urls(host, 'client'),
+        get_urls=_get_urls,
     )
 
     # Start (/enable) the etcd service
