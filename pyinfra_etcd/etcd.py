@@ -102,19 +102,21 @@ def _get_cluster_node_urls():
 
 
 @deploy('Deploy etcd', data_defaults=DEFAULTS)
-def install_etcd(state, host, enable_service=True):
+def install_etcd(state, host):
     if not host.data.etcd_version:
         raise DeployError(
             'No etcd_version set for this host, refusing to install etcd!',
         )
 
     server.user(
+        state, host,
         {'Create the etcd user'},
         'etcd',
         shell='/sbin/nologin',
     )
 
     files.directory(
+        state, host,
         {'Ensure the etcd data directory exists'},
         '{{ host.data.etcd_data_dir }}',
         user='etcd',
@@ -130,33 +132,35 @@ def install_etcd(state, host, enable_service=True):
     )
 
     # Work out the filename
-    version_name = (
-        'etcd-{{ host.data.etcd_version }}-linux-'
-        '{{ "amd64" if host.fact.arch == "x86_64" else host.fact.arch }}'
-    )
+    host.data.etcd_version_name = (
+        'etcd-{0}-linux-'
+        'amd64' if host.fact.arch == 'x86_64' else host.fact.arch
+    ).format(host.data.etcd_version)
 
     # Work out the download URL
     download_url = (
         '{{ host.data.etcd_download_base_url }}/'
         '{{ host.data.etcd_version }}/'
-        '%s.tar.gz'
-    ) % version_name
+        '{{ host.data.etcd_version_name }}.tar.gz'
+    )
 
-    temp_filename = state.get_temp_filename(
+    host.data.etcd_temp_filename = state.get_temp_filename(
         'etcd-{0}'.format(host.data.etcd_version),
     )
 
     download_etcd = files.download(
+        state, host,
         {'Download etcd'},
         download_url,
-        temp_filename,
+        '{{ host.data.etcd_temp_filename }}',
     )
 
     # If we downloaded etcd, extract it!
     if download_etcd.changed:
         server.shell(
+            state, host,
             {'Extract etcd'},
-            'tar -xzf {0} -C /usr/local/etcd'.format(temp_filename),
+            'tar -xzf {{ host.data.etcd_temp_filename }} -C /usr/local/etcd',
         )
 
     files.link(
@@ -174,8 +178,11 @@ def install_etcd(state, host, enable_service=True):
     )
 
 
+@deploy('Configure etcd', data_defaults=DEFAULTS)
+def configure_etcd(state, host, enable_service=True):
     # Setup etcd init
-    files.template(
+    generate_service = files.template(
+        state, host,
         {'Upload the etcd systemd unit file'},
         _get_template_path('etcd.service.j2'),
         '/etc/systemd/system/etcd.service',
@@ -183,6 +190,7 @@ def install_etcd(state, host, enable_service=True):
 
     # Configure etcd
     files.template(
+        state, host,
         {'Upload the etcd env file'},
         _get_template_path('etcd.conf.j2'),
         '{{ host.data.etcd_env_file }}',
@@ -202,7 +210,14 @@ def install_etcd(state, host, enable_service=True):
         op_name = '{0} and enabled'.format(op_name)
 
     init.systemd(
+        state, host,
         {op_name},
         'etcd',
         enabled=enable_service,
+        daemon_reload=generate_service.changed,
     )
+
+
+def deploy_etcd(enable_service=True):
+    install_etcd()
+    configure_etcd(enable_service=enable_service)

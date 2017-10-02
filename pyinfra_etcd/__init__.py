@@ -1,1 +1,1 @@
-from .etcd import install_etcd  # noqa
+from .etcd import configure_etcd, deploy_etcd, install_etcd  # noqa
