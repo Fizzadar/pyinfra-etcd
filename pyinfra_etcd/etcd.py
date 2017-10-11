@@ -33,7 +33,7 @@ def install_etcd(state, host):
 
     files.directory(
         state, host,
-        {'Ensure {0} exists'.format(host.data.etcd_install_dir)},
+        {'Ensure the etcd install directory exists'},
         host.data.etcd_install_dir,
         user=host.data.etcd_user,
         group=host.data.etcd_user,
@@ -45,13 +45,6 @@ def install_etcd(state, host):
         'amd64' if host.fact.arch == 'x86_64' else host.fact.arch
     ).format(host.data.etcd_version)
 
-    # Work out the download URL
-    download_url = (
-        '{{ host.data.etcd_download_base_url }}/'
-        '{{ host.data.etcd_version }}/'
-        '{{ host.data.etcd_version_name }}.tar.gz'
-    )
-
     host.data.etcd_temp_filename = state.get_temp_filename(
         'etcd-{0}'.format(host.data.etcd_version),
     )
@@ -59,7 +52,11 @@ def install_etcd(state, host):
     download_etcd = files.download(
         state, host,
         {'Download etcd'},
-        download_url,
+        (
+            '{{ host.data.etcd_download_base_url }}/'
+            '{{ host.data.etcd_version }}/'
+            '{{ host.data.etcd_version_name }}.tar.gz'
+        ),
         '{{ host.data.etcd_temp_filename }}',
     )
 
@@ -68,7 +65,7 @@ def install_etcd(state, host):
         server.shell(
             state, host,
             {'Extract etcd'},
-            'tar -xzf {{ host.data.etcd_temp_filename }} -C /usr/local/etcd',
+            'tar -xzf {{ host.data.etcd_temp_filename }} -C {{ host.data.etcd_install_dir }}',
         )
 
     files.link(
