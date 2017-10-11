@@ -10,6 +10,7 @@ DEFAULTS = {
     'etcd_bin_dir': '/usr/local/bin',
 
     # Node config
+    'etcd_user': 'etcd',
     'etcd_env_file': '/etc/default/etcd',
     'etcd_data_dir': '/var/lib/etcd',
     'etcd_peer_port': 2380,

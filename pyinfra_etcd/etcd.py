@@ -9,7 +9,7 @@ from .defaults import DEFAULTS
 from .util import get_cluster_node_urls, get_template_path, get_urls
 
 
-@deploy('Deploy etcd', data_defaults=DEFAULTS)
+@deploy('Install etcd', data_defaults=DEFAULTS)
 def install_etcd(state, host):
     if not host.data.etcd_version:
         raise DeployError(
@@ -27,16 +27,16 @@ def install_etcd(state, host):
         state, host,
         {'Ensure the etcd data directory exists'},
         '{{ host.data.etcd_data_dir }}',
-        user='etcd',
-        group='etcd',
+        user=host.data.etcd_user,
+        group=host.data.etcd_user,
     )
 
     files.directory(
         state, host,
         {'Ensure {0} exists'.format(host.data.etcd_install_dir)},
         host.data.etcd_install_dir,
-        user='etcd',
-        group='etcd',
+        user=host.data.etcd_user,
+        group=host.data.etcd_user,
     )
 
     # Work out the filename
