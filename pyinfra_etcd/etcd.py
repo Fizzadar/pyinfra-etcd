@@ -61,12 +61,12 @@ def install_etcd(state, host):
     )
 
     # If we downloaded etcd, extract it!
-    if download_etcd.changed:
-        server.shell(
-            state, host,
-            {'Extract etcd'},
-            'tar -xzf {{ host.data.etcd_temp_filename }} -C {{ host.data.etcd_install_dir }}',
-        )
+    server.shell(
+        state, host,
+        {'Extract etcd'},
+        'tar -xzf {{ host.data.etcd_temp_filename }} -C {{ host.data.etcd_install_dir }}',
+        when=download_etcd.changed,
+    )
 
     files.link(
         state, host,
