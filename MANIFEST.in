@@ -1,0 +1,1 @@
+include pyinfra_etcd/templates/*
