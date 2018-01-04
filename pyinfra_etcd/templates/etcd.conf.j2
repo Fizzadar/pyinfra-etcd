@@ -9,7 +9,7 @@
 # Node
 #
 
-ETCD_NAME={{ host.name }}
+ETCD_NAME={{ host.data.etcd_name or host.name }}
 ETCD_DATA_DIR={{ host.data.etcd_data_dir }}
 
 ETCD_INITIAL_ADVERTISE_PEER_URLS={{ comma_list(get_urls(host, 'peer')) }}

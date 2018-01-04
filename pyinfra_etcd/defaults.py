@@ -10,6 +10,7 @@ DEFAULTS = {
     'etcd_bin_dir': '/usr/local/bin',
 
     # Node config
+    'etcd_name': None,
     'etcd_user': 'etcd',
     'etcd_env_file': '/etc/default/etcd',
     'etcd_data_dir': '/var/lib/etcd',
