@@ -56,7 +56,7 @@ def get_urls(host, type_):
         # Of one specific type?
         if interface_type:
             listen_urls.append(
-                interface[host.data.etcd_interface_type]['address'],
+                network_device[host.data.etcd_interface_type]['address'],
             )
 
         # Or any IPs on the interface
