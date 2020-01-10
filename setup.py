@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 if __name__ == '__main__':
     setup(
-        version='0.2',
+        version='0.3',
         name='pyinfra-etcd',
         description='Install & bootstrap etcd clusters with pyinfra.',
         packages=find_packages(),
